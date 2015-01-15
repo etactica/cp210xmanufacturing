@@ -30,6 +30,7 @@ CPPOBJS   = main.o \
 	    CP210xManufacturing/CP210xManufacturing.o
 OBJS      = $(COBJS) $(CPPOBJS)
 LIBS      = `pkg-config libusb-1.0 --libs`
+LIBS      += -lpthread
 INCLUDES ?= -I./Common -I./CP210xManufacturing `pkg-config libusb-1.0 --cflags`
 
 $(OUT)main: $(OBJS)
