@@ -1,3 +1,4 @@
 *.o
 *.so.*
 Release/Linux/main
+nbproject
