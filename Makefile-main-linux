@@ -1,0 +1,47 @@
+###########################################
+# Makefile for CP210xManufacturing test
+# using libusb-1.0
+#
+# Silicon Labs
+# 10-22-2012
+###########################################
+
+OUT      ?= Release/Linux/
+
+all: $(OUT)main
+
+CC       ?= gcc
+CFLAGS   ?= -Wall -g
+
+CXX      ?= g++
+CXXFLAGS ?= -Wall -g
+
+COBJS     = 
+CPPOBJS   = main.o \
+            CP210xManufacturing/CP210xDevice.o \
+            CP210xManufacturing/CP2101Device.o \
+            CP210xManufacturing/CP2102Device.o \
+            CP210xManufacturing/CP2103Device.o \
+            CP210xManufacturing/CP2104Device.o \
+            CP210xManufacturing/CP2105Device.o \
+            CP210xManufacturing/CP2108Device.o \
+            CP210xManufacturing/CP2109Device.o \
+            CP210xManufacturing/CP210xSupportFunctions.o \
+	    CP210xManufacturing/CP210xManufacturing.o
+OBJS      = $(COBJS) $(CPPOBJS)
+LIBS      = `pkg-config libusb-1.0 --libs`
+INCLUDES ?= -I./Common -I./CP210xManufacturing `pkg-config libusb-1.0 --cflags`
+
+$(OUT)main: $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(LIBS) -o $(OUT)main
+	
+$(COBJS): %.o: %.c
+	$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
+
+$(CPPOBJS): %.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $(INCLUDES) $< -o $@
+
+clean:
+	rm -f $(OBJS) $(OUT)main
+
+.PHONY: clean
