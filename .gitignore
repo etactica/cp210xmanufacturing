@@ -1,4 +1,4 @@
 *.o
-*.so.*
-Release/Linux/main
+*.so*
+Release/Linux/cp210xmanufacturing-example
 nbproject
