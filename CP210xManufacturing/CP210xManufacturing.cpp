@@ -23,18 +23,18 @@ CDeviceList<CCP210xDevice> DeviceList;
 // Dynamic Library Initializer/Finalizer (Constructor/Destructor)
 ////////////////////////////////////////////////////////////////////////////////
 
-libusb_context* libusbContext;
 
 __attribute__((constructor))
 static void Initializer() {
     // Called before main() executes
-    libusb_init(&libusbContext);
+    // Use the "default" context
+    libusb_init(NULL);
 }
 
 __attribute__((destructor))
 static void Finalizer() {
     // Called after main() returns
-    libusb_exit(libusbContext);
+    libusb_exit(NULL);
 }
 
 /////////////////////////////////////////////////////////////////////////////
