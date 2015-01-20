@@ -10,9 +10,6 @@ OUT      ?= Release/Linux/
 
 all: $(OUT)libcp210xmanufacturing.so.1.0
 
-install: all
-	echo "Fake install target to satisfy OpenWrt build system"
-
 CC       ?= gcc
 CFLAGS   ?= -Wall -fPIC -g
 
