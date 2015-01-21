@@ -8,7 +8,7 @@
 
 OUT      ?= Release/Linux/
 
-all: $(OUT)libcp210xmanufacturing.so.1.0 $(OUT)cp210xmanufacturing-example
+all: $(OUT)libcp210xmanufacturing.so.1.0 $(OUT)cp210xmanufacturing-example contrib
 
 CC       ?= gcc
 CFLAGS   ?= -Wall -fPIC -g
@@ -51,8 +51,12 @@ main.o: main.cpp
 $(OUT)cp210xmanufacturing-example: main.o $(OUT)libcp210xmanufacturing.so.1.0
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $< $(LIBS) $(APP_LIBS) -o $@
 
+contrib: $(OUT)libcp210xmanufacturing.so.1.0
+	$(MAKE) -C contrib
+
 clean:
 	$(RM) $(OBJS) $(OUT)libcp210xmanufacturing.so*
 	$(RM) main.o $(OUT)cp210xmanufacturing-example
+	$(MAKE) -C contrib clean
 
 .PHONY: clean
