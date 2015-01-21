@@ -16,7 +16,7 @@ CFLAGS   ?= -Wall -fPIC -g
 CXX      ?= g++
 CXXFLAGS ?= -Wall -fPIC -g
 
-COBJS     = 
+COBJS     =
 CPPOBJS   = CP210xManufacturing/CP210xDevice.o \
             CP210xManufacturing/CP2101Device.o \
             CP210xManufacturing/CP2102Device.o \
@@ -37,7 +37,7 @@ $(OUT)libcp210xmanufacturing.so.1.0: $(OBJS)
 	$(CXX) -shared -Wl,-soname,libcp210xmanufacturing.so.1 -o $(OUT)libcp210xmanufacturing.so.1.0 $^ $(LIBS)
 	ln -s libcp210xmanufacturing.so.1.0 $(OUT)libcp210xmanufacturing.so.1
 	ln -s libcp210xmanufacturing.so.1.0 $(OUT)libcp210xmanufacturing.so
-	
+
 $(COBJS): %.o: %.c
 	$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
 
