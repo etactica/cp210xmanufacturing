@@ -35,12 +35,16 @@ void Test()
 	status = CP210x_GetNumDevices(&dwNumDevices);
 
 	if (status == CP210x_SUCCESS) {
-		printf("Found %d devices\n", dwNumDevices);
+		printf("Found %d usb devices\n", dwNumDevices);
 		for (DWORD i = 0; i < dwNumDevices; i++) {
 			//TODO
 			CP210x_DEVICE_STRING str;
-			CP210x_GetProductString(i, str, 0xFF);
-			printf("\nDevice %d, %s\n", i, str);
+			status = CP210x_GetProductString(i, str, 0xFF);
+			if (status != CP210x_SUCCESS) {
+				printf("Device %d doesn't seem to be compatible...\n", i+1);
+				continue;
+			}
+			printf("\nDevice %d, %s\n", i+1, str);
 			HANDLE h;
 			if (CP210x_Open(i, &h) == CP210x_SUCCESS) {
 				BYTE partNum;
@@ -50,17 +54,12 @@ void Test()
 				WORD version;
 				WORD flushBuf;
 				BYTE lockValue;
-				BYTE ifc;
 				BYTE ifc0Mode, ifc1Mode;
 				PORT_CONFIG portConfig;
-				DUAL_PORT_CONFIG dualPortConfig;
-				QUAD_PORT_CONFIG quadPortConfig;
 				BAUD_CONFIG_DATA baudConfig;
 				CP210x_PRODUCT_STRING productString;
 				CP210x_SERIAL_STRING serialString;
 				CP210x_MANUFACTURER_STRING manufacturerString;
-				CP2105_INTERFACE_STRING cp2105InterfaceString;
-				CP2108_INTERFACE_STRING cp2108InterfaceString;
 				BYTE length;
 
 				status = CP210x_GetPartNumber(h, &partNum);
@@ -93,40 +92,19 @@ void Test()
 				status = CP210x_GetDeviceManufacturerString(h, &manufacturerString, &length, true);
 				printf("status = %X, Manufacturer String = %s\n", status, manufacturerString);
 
-				ifc = 0;
-				status = CP210x_GetDeviceInterfaceString(h, ifc, &cp2105InterfaceString, &length, true);
-				printf("status = %X, CP2105 Interface %d String = %s\n", status, ifc, cp2105InterfaceString);
-				ifc = 1;
-				status = CP210x_GetDeviceInterfaceString(h, ifc, &cp2105InterfaceString, &length, true);
-				printf("status = %X, CP2105 Interface %d String = %s\n", status, ifc, cp2105InterfaceString);
-
-				ifc = 0;
-				status = CP210x_GetDeviceInterfaceString(h, ifc, &cp2108InterfaceString, &length, true);
-				printf("status = %X, CP2108 Interface %d String = %s\n", status, ifc, cp2108InterfaceString);
-				ifc = 1;
-				status = CP210x_GetDeviceInterfaceString(h, ifc, &cp2108InterfaceString, &length, true);
-				printf("status = %X, CP2108 Interface %d String = %s\n", status, ifc, cp2108InterfaceString);
-				ifc = 2;
-				status = CP210x_GetDeviceInterfaceString(h, ifc, &cp2108InterfaceString, &length, true);
-				printf("status = %X, CP2108 Interface %d String = %s\n", status, ifc, cp2108InterfaceString);
-				ifc = 3;
-				status = CP210x_GetDeviceInterfaceString(h, ifc, &cp2108InterfaceString, &length, true);
-				printf("status = %X, CP2108 Interface %d String = %s\n", status, ifc, cp2108InterfaceString);
-
 				status = CP210x_GetDeviceMode(h, &ifc0Mode, &ifc1Mode);
 				printf("status = %X, Ifc0Mode = %02X, Ifc1Mode = %02X\n", status, ifc0Mode, ifc1Mode);
 
 				status = CP210x_GetPortConfig(h, &portConfig);
-				printf("status = %X, Port Config =\n", status);
-
-				status = CP210x_GetDualPortConfig(h, &dualPortConfig);
-				printf("status = %X, Dual Port Config =\n", status);
-
-				status = CP210x_GetQuadPortConfig(h, &quadPortConfig);
-				printf("status = %X, Quad Port Config =\n", status);
+				printf("status = %X, Port Config = {mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
+					status, portConfig.Mode, portConfig.Reset_Latch, portConfig.Suspend_Latch, portConfig.EnhancedFxn);
 
 				status = CP210x_GetBaudRateConfig(h, baudConfig);
 				printf("status = %X, Baud Rate Config =\n", status);
+				for (int kk = 0; kk < NUM_BAUD_CONFIGS; kk++) {
+					printf("\t{baudgen=%d, baudrate=%d, prescaler=%d, timer0reload=%d}\n",
+						baudConfig[0].BaudGen, baudConfig[0].BaudRate, baudConfig[0].Prescaler, baudConfig[0].Timer0Reload);
+				}
 
 				status = CP210x_GetLockValue(h, &lockValue);
 				printf("status = %X, Lock Value = %02X\n", status, lockValue);
@@ -135,7 +113,7 @@ void Test()
 			}
 		}
 	} else {
-		printf("No devices found!\n");
+		printf("No usb devices found!\n");
 	}
 }
 
