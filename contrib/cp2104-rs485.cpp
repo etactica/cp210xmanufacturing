@@ -71,7 +71,8 @@ int write_rs485_invert(int dev_idx)
 	portConfig.EnhancedFxn |= EF_GPIO_2_RS485 | EF_RS485_INVERT;
 	printf("status = %X, TO BE WRITTEN Port Config = \n{mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
 		status, portConfig.Mode, portConfig.Reset_Latch, portConfig.Suspend_Latch, portConfig.EnhancedFxn);
-	printf("Should we continue? This will attempt to write to OTP ROM! Y to confirm, anything else to abort\n");
+	printf("Should we continue? This will attempt to write to OTP ROM!\n");
+	printf("\tY to confirm, anything else to abort\n");
 	confirm = getchar();
 	if (confirm == 'Y') {
 		printf("I really hope the author of this code knew what they were doing....\n");
