@@ -65,10 +65,10 @@ int write_rs485_invert(int dev_idx) {
 		goto out;
 	}
 	status = CP210x_GetPortConfig(h, &portConfig);
-	printf("status = %X, EXISTING Port Config = {mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
+	printf("status = %X, EXISTING Port Config = \n{mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
 		status, portConfig.Mode, portConfig.Reset_Latch, portConfig.Suspend_Latch, portConfig.EnhancedFxn);
 	portConfig.EnhancedFxn |= EF_GPIO_2_RS485 | EF_RS485_INVERT;
-	printf("status = %X, TO BE WRITTEN Port Config = {mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
+	printf("status = %X, TO BE WRITTEN Port Config = \n{mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
 		status, portConfig.Mode, portConfig.Reset_Latch, portConfig.Suspend_Latch, portConfig.EnhancedFxn);
 	printf("Should we continue? This will attempt to write to OTP ROM! Y to confirm, anything else to abort\n");
 	confirm = getchar();
@@ -81,6 +81,7 @@ int write_rs485_invert(int dev_idx) {
 			rc = -1;
 			goto out;
 		}
+		printf("Ok, it _appeared_ to work...\n");
 	} else {
 		printf("No problem, skipping write\n");
 	}
