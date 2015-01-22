@@ -34,7 +34,8 @@ void PrintBuffer(BYTE* buffer, DWORD len)
 	}
 }
 
-int write_rs485_invert(int dev_idx) {
+int write_rs485_invert(int dev_idx)
+{
 	CP210x_STATUS status;
 	CP210x_DEVICE_STRING str;
 	int rc = 0;
@@ -188,7 +189,8 @@ void dump_all_devices(struct app *st)
 	}
 }
 
-int parse_options(int argc, char** argv, struct app *st) {
+int parse_options(int argc, char** argv, struct app *st)
+{
 	static struct option long_options[] = {
 		{"device", required_argument, NULL, 'd'},
 		{"list", no_argument, NULL, 'l'},
@@ -198,43 +200,43 @@ int parse_options(int argc, char** argv, struct app *st) {
 	};
 
 	int option_index = 0;
-	int c,q;
+	int c, q;
 	while ((c = getopt_long(argc, argv, "d:lwh", long_options, &option_index)) != -1) {
 		switch (c) {
-			case 0:
-				printf("XXXXX Shouldn't really normally come here, only if there's no corresponding option\n");
-				printf("option %s", long_options[option_index].name);
-				if (optarg) {
-					printf(" with arg %s", optarg);
-				}
-				printf("\n");
-				break;
-			case 'h':
-				printf("%s - usage:\n\n", argv[0]);
-				printf("  -d <index>, --device=index\n");
-				printf("\t\t\tspecify a particular device to work on\n");
-				printf("  -l, --list\n");
-				printf("\t\t\tList the existing config of a device or devices\n");
-				printf("  -w, --write\n");
-				printf("\t\t\tAttempt to set the device to rs485 mode+invert (BE CAREFUL!)\n");
-				printf("  -h, --help\t\tPrint this help\n");
-				printf("\nWith no arguments, list mode will run.\n");
-				exit(EXIT_SUCCESS);
-				break;
-			case 'd':
-				sscanf(optarg, "%i", &q);
-				st->dev_idx = q;
-				break;
-			case 'l':
-				st->dump = true;
-				break;
-			case 'w':
-				st->write = true;
-				break;
-			case '?':
-				printf("Busted arguments, aborting\n");
-				exit(1);
-				break;
+		case 0:
+			printf("XXXXX Shouldn't really normally come here, only if there's no corresponding option\n");
+			printf("option %s", long_options[option_index].name);
+			if (optarg) {
+				printf(" with arg %s", optarg);
+			}
+			printf("\n");
+			break;
+		case 'h':
+			printf("%s - usage:\n\n", argv[0]);
+			printf("  -d <index>, --device=index\n");
+			printf("\t\t\tspecify a particular device to work on\n");
+			printf("  -l, --list\n");
+			printf("\t\t\tList the existing config of a device or devices\n");
+			printf("  -w, --write\n");
+			printf("\t\t\tAttempt to set the device to rs485 mode+invert (BE CAREFUL!)\n");
+			printf("  -h, --help\t\tPrint this help\n");
+			printf("\nWith no arguments, list mode will run.\n");
+			exit(EXIT_SUCCESS);
+			break;
+		case 'd':
+			sscanf(optarg, "%i", &q);
+			st->dev_idx = q;
+			break;
+		case 'l':
+			st->dump = true;
+			break;
+		case 'w':
+			st->write = true;
+			break;
+		case '?':
+			printf("Busted arguments, aborting\n");
+			exit(1);
+			break;
 		}
 	}
 
@@ -247,10 +249,9 @@ int parse_options(int argc, char** argv, struct app *st) {
 	return 0;
 }
 
-
 int main(int argc, char* argv[])
 {
-	struct app state = { 0 };
+	struct app state = {0};
 	state.dev_idx = -1;
 	state.dump = true;
 	printf("Karl's test testy version\n");
