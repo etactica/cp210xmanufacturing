@@ -34,6 +34,62 @@ void PrintBuffer(BYTE* buffer, DWORD len)
 	}
 }
 
+int write_rs485_invert(int dev_idx) {
+	CP210x_STATUS status;
+	CP210x_DEVICE_STRING str;
+	int rc = 0;
+	int confirm;
+
+	status = CP210x_GetProductString(dev_idx, str, CP210x_RETURN_FULL_PATH);
+	if (status != CP210x_SUCCESS) {
+		printf("Device %d doesn't seem to be compatible or wasn't found...\n", dev_idx);
+		return -1;
+	}
+	printf("\nDevice %d, %s\n", dev_idx, str);
+	HANDLE h;
+	status = CP210x_Open(dev_idx, &h);
+	if (status != CP210x_SUCCESS) {
+		printf("Unable to open device %d: %d\n", dev_idx, status);
+		rc = -1;
+		goto out;
+	}
+	BYTE partNum;
+	PORT_CONFIG portConfig;
+
+	status = CP210x_GetPartNumber(h, &partNum);
+	printf("\nstatus = %X, Part Number = %02X\n", status, partNum);
+	// Thanks silabs, not actually a "version" response
+	if (partNum != CP210x_CP2104_VERSION) {
+		printf("Device given is not a cp2104\n");
+		rc = -1;
+		goto out;
+	}
+	status = CP210x_GetPortConfig(h, &portConfig);
+	printf("status = %X, EXISTING Port Config = {mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
+		status, portConfig.Mode, portConfig.Reset_Latch, portConfig.Suspend_Latch, portConfig.EnhancedFxn);
+	portConfig.EnhancedFxn |= EF_GPIO_2_RS485 | EF_RS485_INVERT;
+	printf("status = %X, TO BE WRITTEN Port Config = {mode=%#x, reset_latch=%#x, suspend_latch=%#x, enh_fxn=%#x}\n",
+		status, portConfig.Mode, portConfig.Reset_Latch, portConfig.Suspend_Latch, portConfig.EnhancedFxn);
+	printf("Should we continue? This will attempt to write to OTP ROM! Y to confirm, anything else to abort\n");
+	confirm = getchar();
+	if (confirm == 'Y') {
+		printf("I really hope the author of this code knew what they were doing....\n");
+		//CP210x_SetSelfPower(h, true);  // Should do this for correctness?
+		status = CP210x_SetPortConfig(h, &portConfig);
+		if (status != CP210x_SUCCESS) {
+			printf("crap, SetPortConfig failed with code: %d\n", status);
+			rc = -1;
+			goto out;
+		}
+	} else {
+		printf("No problem, skipping write\n");
+	}
+	rc = 0;
+out:
+	CP210x_Close(h);
+	return rc;
+}
+
 void dump_device(int i)
 {
 	CP210x_STATUS status;
@@ -210,7 +266,7 @@ int main(int argc, char* argv[])
 			printf("Must specify a device to write!\n");
 			exit(1);
 		}
-		printf("writing to device %d\n", state.dev_idx);
+		write_rs485_invert(state.dev_idx);
 	}
 
 	return 0;
