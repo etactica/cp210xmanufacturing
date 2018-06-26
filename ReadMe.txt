@@ -1,3 +1,13 @@
+-- Update June 2018 --
+
+Silabs contacted us and says they have a new and improved version of the
+functionality that this package provided.
+
+See https://www.silabs.com/products/development-tools/software/interface
+(You're looking for the USBXpressHostSDK package)
+
+We're not using these parts anymore, so have not verified this in anyway,
+
 CP210xManufacturing Library for CP210x
 --------------------------------------
 
